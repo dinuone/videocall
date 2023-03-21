@@ -18,7 +18,7 @@ let cameraFacingMode = 'user'
 
 let defaultsOpts = { audio: false, video: true }
 let shouldFaceUser = true;
-let stream = null;
+let currentLocalVideoTrack = null;
 
 const isMobile = (() => {
     if (typeof navigator === 'undefined' || typeof navigator.userAgent !== 'string') {
@@ -31,42 +31,34 @@ import VideoRecorder from "@/assets/VideoRecorder";
 
 export default {
 
-    captureBack() {
+    captureBack(localVideoTrack) {
         var container = document.getElementById('localTrack')
         var video =  container.firstChild
         console.log(video)
         defaultsOpts.video = { facingMode: { exact: "environment" }  }
         console.log(defaultsOpts)
 
-        navigator.mediaDevices.getUserMedia(defaultsOpts)
-            .then(function(_stream) {
-                stream  = _stream;
-                console.log(stream)
-                video.srcObject = stream;
-                video.play();
-            })
-            .catch(function(err) {
-                console.log(err)
-            });
+        localVideoTrack.restart(defaultsOpts.video).then(() => {
+            if (!currentLocalVideoTrack) {
+                currentLocalVideoTrack = localVideoTrack;
+                localVideoTrack.attach(video);
+            }
+        });
     },
 
-    captureFront() {
+    captureFront(localVideoTrack) {
         var container = document.getElementById('localTrack')
         var video =  container.firstChild
         console.log(video)
         defaultsOpts.video = { facingMode: { exact: "user" } }
         console.log(defaultsOpts)
 
-        navigator.mediaDevices.getUserMedia(defaultsOpts)
-            .then(function(_stream) {
-                stream  = _stream;
-                console.log(stream)
-                video.srcObject = stream;
-                video.play();
-            })
-            .catch(function(err) {
-                console.log(err)
-            });
+        localVideoTrack.restart(defaultsOpts.video).then(() => {
+            if (!currentLocalVideoTrack) {
+                currentLocalVideoTrack = localVideoTrack;
+                localVideoTrack.attach(video);
+            }
+        });
     },
 
     startRecording: function (element,localVideoElement,remoteVideoElement, localVideo, remoteVideo){

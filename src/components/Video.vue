@@ -139,18 +139,9 @@ export default {
 
        var localParticipant = this.activeRoom.localParticipant
        const tracks = Array.from(localParticipant.videoTracks.values()).map(publication => publication.track);
-       this.stream = tracks
-       if( this.stream == null ) return
-       // we need to flip, stop everything
-       this.stream.forEach(t => {
-         t.stop();
-       });
        // toggle / flip
        this.shouldFaceUser = !this.shouldFaceUser;
-       videoInterface.captureBack()
-       const cameraTrack = tracks.find(track => track.kind === 'video');
-       // Switch to the back facing camera.
-       cameraTrack.restart({ facingMode: 'environment' });
+       videoInterface.captureBack(tracks.find(track => track.kind === 'video'))
     },
 
 
@@ -163,19 +154,9 @@ export default {
       var localParticipant = this.activeRoom.localParticipant
       const tracks = Array.from(localParticipant.videoTracks.values()).map(publication => publication.track);
       this.stream = tracks
-      if( this.stream == null ) return
-      // we need to flip, stop everything
-      this.stream.forEach(t => {
-        t.stop();
-      });
-
-      const cameraTrack = tracks.find(track => track.kind === 'video');
-      // Switch to the back facing camera.
-      cameraTrack.restart({ facingMode: 'user' });
-
       // toggle / flip
       this.shouldFaceUser = !this.shouldFaceUser;
-      videoInterface.captureFront()
+      videoInterface.captureFront(tracks.find(track => track.kind === 'video'))
     },
 
     muteAndUnmuteAudio:function (status){
